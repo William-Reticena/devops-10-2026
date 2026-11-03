@@ -1,0 +1,12 @@
+@baseUrl = http://localhost:8000
+
+### Index
+GET {{baseUrl}}/
+Accept: application/json
+
+### List Tarefas
+GET {{baseUrl}}/tarefas
+Accept: application/json
+
+### Create Tarefa
+POST {{baseUrl}}/tarefas?titulo=Criare%20uma%20nova%20tarefa&descricao=Esta%20%C3%A9%20a%20descri%C3%A7%C3%A3o%20da%20nova%20tarefa
