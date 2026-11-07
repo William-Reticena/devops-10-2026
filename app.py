@@ -59,7 +59,7 @@ async def apagar_tarefa(id: int):
 
   return {"message": "Tarefa não existe"}
 
-@APP.post("/tarefas")
+@APP.post("/tarefas", status_code=201)
 async def adicionar_tarefa(titulo: str, descricao: str):
   global TAREFAS
   
