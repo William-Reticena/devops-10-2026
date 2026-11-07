@@ -34,6 +34,25 @@ async def tarefa_especifica(id: int):
 
   return {"message": "Tarefa não existe"}
 
+@APP.put("/tarefas/{id}")
+async def concluir_tarefa(id: int):
+  for tarefa in TAREFAS:
+    if tarefa["id"] == id:
+      tarefa["concluida"] = True
+      tarefa["concluida_em"] = datetime.now()
+      return tarefa
+
+  return {"message": "Tarefa não existe"}
+
+@APP.delete("/tarefas/{id}")
+async def apagar_tarefa(id: int):
+  for indice, tarefa in enumerate(TAREFAS):
+    if tarefa["id"] == id:
+      TAREFAS.pop(indice)
+      return {"message": "Tarefa excluída com sucesso!"}
+
+  return {"message": "Tarefa não existe"}
+
 @APP.post("/tarefas")
 async def adicionar_tarefa(titulo: str, descricao: str):
   global TAREFAS

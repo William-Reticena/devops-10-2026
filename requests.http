@@ -12,5 +12,13 @@ Accept: application/json
 GET {{baseUrl}}/tarefas/0
 Accept: application/json
 
+### Concluir Tarefa
+PUT {{baseUrl}}/tarefas/0
+Accept: application/json
+
+### Excluir Tarefa
+DELETE {{baseUrl}}/tarefas/0
+Accept: application/json
+
 ### Create Tarefa
 POST {{baseUrl}}/tarefas?titulo=Criare%20uma%20nova%20tarefa&descricao=Esta%20%C3%A9%20a%20descri%C3%A7%C3%A3o%20da%20nova%20tarefa
