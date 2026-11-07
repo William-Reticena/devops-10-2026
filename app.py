@@ -26,6 +26,14 @@ async def tarefas():
 
   return lista_somente_id_titulo
 
+@APP.get("/tarefas/{id}")
+async def tarefa_especifica(id: int):
+  for tarefa in TAREFAS:
+    if tarefa["id"] == id:
+      return tarefa
+
+  return {"message": "Tarefa não existe"}
+
 @APP.post("/tarefas")
 async def adicionar_tarefa(titulo: str, descricao: str):
   global TAREFAS
