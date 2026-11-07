@@ -51,11 +51,16 @@ async def concluir_tarefa(tarefa_id: int):
         if tarefa["id"] == tarefa_id:
             tarefa["concluida"] = True
             tarefa["concluida_em"] = datetime.now()
-            requests.post(
-                URL_NOTIFICACAO,
-                params={"_id": tarefa["id"], "titulo": tarefa["titulo"]},
-                timeout=5,
-            )
+
+            try:
+                requests.post(
+                    URL_NOTIFICACAO,
+                    params={"_id": tarefa["id"], "titulo": tarefa["titulo"]},
+                    timeout=5,
+                )
+            except requests.RequestException as e:
+                print(f"Error notifying: {e}")
+
             return tarefa
 
     return {"message": "Tarefa não existe"}

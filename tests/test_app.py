@@ -54,8 +54,8 @@ def test_complete_task(monkeypatch):
     app.TAREFAS.append({"id": 0, "titulo": "Estudar", "descricao": "FastAPI", "concluida": False})
     notified = {}
 
-    def fake_post(url, params):
-        notified.update(url=url, params=params)
+    def fake_post(url, params, timeout):
+        notified.update(url=url, params=params, timeout=timeout)
 
     monkeypatch.setattr(app.requests, "post", fake_post)
 
@@ -66,6 +66,7 @@ def test_complete_task(monkeypatch):
     assert notified == {
         "url": app.URL_NOTIFICACAO,
         "params": {"_id": 0, "titulo": "Estudar"},
+        "timeout": 5,
     }
 
 
