@@ -4,7 +4,7 @@ import requests
 
 APP = FastAPI()
 TAREFAS = []
-URL_NOTIFICACAO = "http://localhost:8002/notificar"
+URL_NOTIFICACAO = "http://localhost:8000/notificar"
 
 def criar_tarefa(titulo: str, descricao: str):
   tarefa = {
