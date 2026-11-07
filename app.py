@@ -17,7 +17,14 @@ def criar_tarefa(titulo: str, descricao: str):
 
 @APP.get("/tarefas")
 async def tarefas():
-  return TAREFAS
+  lista_somente_id_titulo = []
+  
+  for tarefa in TAREFAS:
+    lista_somente_id_titulo.append({
+      tarefa["id"]: tarefa["titulo"] 
+    })
+
+  return lista_somente_id_titulo
 
 @APP.post("/tarefas")
 async def adicionar_tarefa(titulo: str, descricao: str):
