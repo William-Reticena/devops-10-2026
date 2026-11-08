@@ -29,7 +29,7 @@ if DATABASE is None:
     raise ValueError("DATABASE environment variable is not set.")
 
 DATABASE_URL = (
-    f"mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}"
+    f"postgresql+psycopg://{DATABASE_USERNAME}:{DATABASE_PASSWORD}"
     f"@{DATABASE_ADDRESS}/{DATABASE}"
 )
 ENGINE = create_engine(DATABASE_URL)
