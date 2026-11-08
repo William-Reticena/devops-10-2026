@@ -34,7 +34,8 @@ jobs:
         pylint --source-roots=. app/api.py
     - name: Test with pytest
       run: |
-        pytest --rootdir app
+        DATABASE_USERNAME=test DATABASE_PASSWORD=test \
+        DATABASE_ADDRESS=localhost DATABASE=testdb pytest
   entrega:
     needs: build
     runs-on: ubuntu-latest
