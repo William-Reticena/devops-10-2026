@@ -4,23 +4,11 @@ from datetime import datetime
 
 import requests
 from fastapi import FastAPI
+from .modelo import Tarefa
 
 APP = FastAPI()
 TAREFAS = []
 URL_NOTIFICACAO = "http://localhost:8000/notificar"
-
-
-def criar_tarefa(titulo: str, descricao: str):
-    """Create a task from its title and description."""
-    tarefa = {
-        "id": len(TAREFAS),
-        "titulo": titulo,
-        "descricao": descricao,
-        "concluida": False,
-        "criada_em": datetime.now(),
-    }
-
-    return tarefa
 
 
 @APP.get("/tarefas")
@@ -29,7 +17,7 @@ async def tarefas():
     lista_somente_id_titulo = []
 
     for tarefa in TAREFAS:
-        lista_somente_id_titulo.append({tarefa["id"]: tarefa["titulo"]})
+        lista_somente_id_titulo.append({tarefa.id: tarefa.titulo})
 
     return lista_somente_id_titulo
 
@@ -38,7 +26,7 @@ async def tarefas():
 async def tarefa_especifica(tarefa_id: int):
     """Return a task by ID."""
     for tarefa in TAREFAS:
-        if tarefa["id"] == tarefa_id:
+        if tarefa.id == tarefa_id:
             return tarefa
 
     return {"message": "Tarefa não existe"}
@@ -48,14 +36,13 @@ async def tarefa_especifica(tarefa_id: int):
 async def concluir_tarefa(tarefa_id: int):
     """Mark a task as completed and notify the notification service."""
     for tarefa in TAREFAS:
-        if tarefa["id"] == tarefa_id:
-            tarefa["concluida"] = True
-            tarefa["concluida_em"] = datetime.now()
+        if tarefa.id == tarefa_id and not tarefa.concluida:
+            tarefa.finalizar()
 
             try:
                 requests.post(
                     URL_NOTIFICACAO,
-                    params={"_id": tarefa["id"], "titulo": tarefa["titulo"]},
+                    params={"_id": tarefa.id, "titulo": tarefa.titulo},
                     timeout=5,
                 )
             except requests.RequestException as e:
@@ -70,7 +57,7 @@ async def concluir_tarefa(tarefa_id: int):
 async def apagar_tarefa(tarefa_id: int):
     """Delete a task by ID."""
     for indice, tarefa in enumerate(TAREFAS):
-        if tarefa["id"] == tarefa_id:
+        if tarefa.id == tarefa_id:
             TAREFAS.pop(indice)
             return {"message": "Tarefa excluída com sucesso!"}
 
@@ -78,9 +65,14 @@ async def apagar_tarefa(tarefa_id: int):
 
 
 @APP.post("/tarefas", status_code=201)
-async def adicionar_tarefa(titulo: str, descricao: str):
+async def adicionar_tarefa(titulo: str, descricao: str = None):
     """Create and store a new task."""
-    tarefa = criar_tarefa(titulo, descricao)
+    tarefa = Tarefa(
+        id=len(TAREFAS),
+        titulo=titulo,
+        descricao=descricao,
+        data_criacao=datetime.now().isoformat(timespec='seconds')
+    )
     TAREFAS.append(tarefa)
 
     return {"message": "Tarefa adicionada com sucesso!", "tarefa": tarefa}

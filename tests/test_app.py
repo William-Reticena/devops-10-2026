@@ -2,17 +2,18 @@ from fastapi.testclient import TestClient
 import pytest
 from unittest.mock import Mock
 
-import app
+import app.api as api
+from app.modelo import Tarefa
 from notificacao import NOTIFICACAO
 
 
-CLIENT = TestClient(app.APP)
+CLIENT = TestClient(api.APP)
 NOTIFICACAO_CLIENT = TestClient(NOTIFICACAO)
 
 
 @pytest.fixture(autouse=True)
 def reset_tasks():
-    app.TAREFAS.clear()
+    api.TAREFAS.clear()
 
 
 def test_index():
@@ -29,7 +30,14 @@ def test_author():
 
 
 def test_list_tasks():
-    app.TAREFAS.append({"id": 0, "titulo": "Estudar", "descricao": "FastAPI"})
+    api.TAREFAS.append(
+        Tarefa(
+            id=0,
+            titulo="Estudar",
+            descricao="FastAPI",
+            data_criacao="2026-01-01T00:00:00",
+        )
+    )
 
     response = CLIENT.get("/tarefas")
 
@@ -38,16 +46,21 @@ def test_list_tasks():
 
 
 def test_get_task():
-    app.TAREFAS.append({"id": 0, "titulo": "Estudar", "descricao": "FastAPI"})
+    api.TAREFAS.append(
+        Tarefa(
+            id=0,
+            titulo="Estudar",
+            descricao="FastAPI",
+            data_criacao="2026-01-01T00:00:00",
+        )
+    )
 
     response = CLIENT.get("/tarefas/0")
 
     assert response.status_code == 200
-    assert response.json() == {
-        "id": 0,
-        "titulo": "Estudar",
-        "descricao": "FastAPI",
-    }
+    assert response.json()["id"] == 0
+    assert response.json()["titulo"] == "Estudar"
+    assert response.json()["descricao"] == "FastAPI"
 
 
 def test_get_nonexistent_task():
@@ -58,20 +71,27 @@ def test_get_nonexistent_task():
 
 
 def test_complete_task(monkeypatch):
-    app.TAREFAS.append({"id": 0, "titulo": "Estudar", "descricao": "FastAPI", "concluida": False})
+    api.TAREFAS.append(
+        Tarefa(
+            id=0,
+            titulo="Estudar",
+            descricao="FastAPI",
+            data_criacao="2026-01-01T00:00:00",
+        )
+    )
     notified = {}
 
     def fake_post(url, params, timeout):
         notified.update(url=url, params=params, timeout=timeout)
 
-    monkeypatch.setattr(app.requests, "post", fake_post)
+    monkeypatch.setattr(api.requests, "post", fake_post)
 
     response = CLIENT.put("/tarefas/0")
 
     assert response.status_code == 200
     assert response.json()["concluida"] is True
     assert notified == {
-        "url": app.URL_NOTIFICACAO,
+        "url": api.URL_NOTIFICACAO,
         "params": {"_id": 0, "titulo": "Estudar"},
         "timeout": 5,
     }
@@ -79,7 +99,7 @@ def test_complete_task(monkeypatch):
 
 def test_complete_nonexistent_task(monkeypatch):
     post = Mock()
-    monkeypatch.setattr(app.requests, "post", post)
+    monkeypatch.setattr(api.requests, "post", post)
 
     response = CLIENT.put("/tarefas/999")
 
@@ -89,13 +109,20 @@ def test_complete_nonexistent_task(monkeypatch):
 
 
 def test_delete_task():
-    app.TAREFAS.append({"id": 0, "titulo": "Estudar", "descricao": "FastAPI"})
+    api.TAREFAS.append(
+        Tarefa(
+            id=0,
+            titulo="Estudar",
+            descricao="FastAPI",
+            data_criacao="2026-01-01T00:00:00",
+        )
+    )
 
     response = CLIENT.delete("/tarefas/0")
 
     assert response.status_code == 200
     assert response.json() == {"message": "Tarefa excluída com sucesso!"}
-    assert app.TAREFAS == []
+    assert api.TAREFAS == []
 
 
 def test_delete_nonexistent_task():
