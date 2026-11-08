@@ -90,3 +90,9 @@ async def adicionar_tarefa(titulo: str, descricao: str):
 async def index():
     """Return the API greeting."""
     return {"message": "Hello, World!"}
+
+
+@APP.get("/autor")
+async def autor():
+    """Return the author's full name."""
+    return {"mensagem": "William Reticena"}

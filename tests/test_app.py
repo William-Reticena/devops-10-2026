@@ -21,6 +21,13 @@ def test_index():
     assert response.json() == {"message": "Hello, World!"}
 
 
+def test_author():
+    response = CLIENT.get("/autor")
+
+    assert response.status_code == 200
+    assert response.json() == {"mensagem": "William Reticena"}
+
+
 def test_list_tasks():
     app.TAREFAS.append({"id": 0, "titulo": "Estudar", "descricao": "FastAPI"})
 
