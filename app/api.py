@@ -4,12 +4,30 @@ from datetime import datetime, timezone
 from typing import Annotated, List
 
 import requests
+import os
 from fastapi import Depends, FastAPI
 from sqlmodel import SQLModel, Session, create_engine, select
 from app.modelo import Tarefa
 
 
-ENGINE = create_engine("sqlite:///banco.db", connect_args={"check_same_thread": False})
+DATABASE_USERNAME = os.environ.get("DATABASE_USERNAME")
+DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")
+DATABASE_ADDRESS = os.environ.get("DATABASE_ADDRESS")
+DATABASE = os.environ.get("DATABASE")
+
+if DATABASE_USERNAME is None:
+    raise ValueError("DATABASE_USERNAME environment variable is not set.")
+
+if DATABASE_PASSWORD is None:
+    raise ValueError("DATABASE_PASSWORD environment variable is not set.")
+
+if DATABASE_ADDRESS is None:
+    raise ValueError("DATABASE_ADDRESS environment variable is not set.")
+
+if DATABASE is None:
+    raise ValueError("DATABASE environment variable is not set.")
+
+ENGINE = create_engine(f"mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_ADDRESS}/{DATABASE}")
 
 def criar_session():
     """Provide a database session for a request."""
