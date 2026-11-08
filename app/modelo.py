@@ -2,9 +2,13 @@
 
 from datetime import datetime
 from typing import Optional
+
 from sqlmodel import SQLModel, Field
 
+
 class Tarefa(SQLModel, table=True):
+    """Represent a task in the task management API."""
+
     id: int = Field(default=None, primary_key=True, unique=True)
     titulo: str
     descricao: Optional[str] = None

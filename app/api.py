@@ -1,12 +1,13 @@
 """API for managing tasks."""
 
 from datetime import datetime, timezone
+import os
 from typing import Annotated, List
 
 import requests
-import os
 from fastapi import Depends, FastAPI
 from sqlmodel import SQLModel, Session, create_engine, select
+
 from app.modelo import Tarefa
 
 
@@ -27,7 +28,11 @@ if DATABASE_ADDRESS is None:
 if DATABASE is None:
     raise ValueError("DATABASE environment variable is not set.")
 
-ENGINE = create_engine(f"mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_ADDRESS}/{DATABASE}")
+DATABASE_URL = (
+    f"mysql+pymysql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}"
+    f"@{DATABASE_ADDRESS}/{DATABASE}"
+)
+ENGINE = create_engine(DATABASE_URL)
 
 def criar_session():
     """Provide a database session for a request."""
