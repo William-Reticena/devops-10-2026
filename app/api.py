@@ -4,7 +4,7 @@ from datetime import datetime
 
 import requests
 from fastapi import FastAPI
-from .modelo import Tarefa
+from app.modelo import Tarefa
 
 APP = FastAPI()
 TAREFAS = []
