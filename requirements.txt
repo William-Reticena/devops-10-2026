@@ -7,4 +7,4 @@ bandit
 sqlmodel
 sqlalchemy
 pymysql
-psycopg
+psycopg[binary]
