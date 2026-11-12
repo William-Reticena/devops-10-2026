@@ -9,7 +9,7 @@ from sqlmodel import SQLModel, Session, create_engine, delete
 from app import api
 from app.api import APP, criar_session
 from app.modelo import Tarefa
-from notificacao import NOTIFICACAO
+from app.notificacao import NOTIFICACAO
 
 
 NOTIFICACAO_CLIENT = TestClient(NOTIFICACAO)
@@ -178,3 +178,11 @@ def test_notify():
 
     assert response.status_code == 200
     assert response.json() == {"mensagem": "OK"}
+
+
+def test_404(client: TestClient):
+    """Return a message for an unknown endpoint."""
+    response = client.get("/endpoint_inexistente")
+
+    assert response.status_code == 404
+    assert response.json() == {"message": "Recurso não encontrado"}

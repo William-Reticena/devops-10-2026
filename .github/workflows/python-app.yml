@@ -54,3 +54,9 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.DOCKERHUB_USER }}/terefas:2.0
+  deploy:
+    needs: [entrega, build]
+    runs-on: ubuntu-slim
+    steps:
+    - name: Deploy to server
+      run: curl -X GET ${{ secrets.DEPLOY_URL_HOOK }}
